@@ -13,6 +13,7 @@ describe('Tests', () => {
 
 	// Login user to the system and fetch access token
 	context('Sign in', () => {
+
 		it('Returns an access token', (done) => {
 			api.post('/sign-in')
 				.send({
@@ -28,10 +29,25 @@ describe('Tests', () => {
 				})
 				.catch(done);
 		});
+
+		it('Throws an error when no email is supplied', (done) => {
+			api.post('/sign-in')
+				.send({
+					password: 'password'
+				})
+				.then((res) => {
+					expect(res.body.access_token).not.be.ok;
+
+					done();
+				})
+				.catch(done);
+		});
+
 	});
 
 	// Get a list of all users
-	context('Users', () => {		
+	context('Users', () => {
+
 		it('Get users list', (done) => {
 			api.get('/users')
 				.set('authorization', accessToken)
@@ -52,9 +68,12 @@ describe('Tests', () => {
 					});
 
 					done();
-				}).
-			catch(done);
+				})
+				.catch(done);
 		});
+
+
+
 	});
 
 });
