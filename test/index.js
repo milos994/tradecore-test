@@ -12,28 +12,33 @@ let users = null;
 describe('Tests', () => {
 
 	// Login user to the system and fetch access token
-	it('Login user', (done) => {
-		api.post('/sign-in')
-			.send({
-				password: 'password',
-				email: 'email',
-			})
-			.then((res) => {
-				login = res.body.access_token;
-				done();
-			}).
-			catch(done);
+	context('Sign in', () => {
+		it('Login user', (done) => {
+			api.post('/sign-in')
+				.send({
+					password: 'password',
+					email: 'email',
+				})
+				.then((res) => {
+					login = res.body.access_token;
+					done();
+				}).
+				catch(done);
+		});
 	});
 
 	// Get a list of all users
-	it('Get users list', (done) => {
-		api.get('/users')
-			.set('authorization', login)
-			.then((res) => {
-				// we expect that there is 6 users. You can check/confirm that in app code.
-				expect(res.body.length).to.be.equal(6);
-				done();
-			}).
-		catch(done);
+	context('Users', () => {		
+		it('Get users list', (done) => {
+			api.get('/users')
+				.set('authorization', login)
+				.then((res) => {
+					// we expect that there is 6 users. You can check/confirm that in app code.
+					expect(res.body.length).to.be.equal(6);
+					done();
+				}).
+			catch(done);
+		});
 	});
+
 });
