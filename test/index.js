@@ -72,6 +72,33 @@ describe('Tests', () => {
 				.catch(done);
 		});
 
+		it('Get user by user_id', (done) => {
+			api.get('/users/1')
+				.set('authorization', accessToken)
+				.set('Accept', 'aplication/json')
+				.then((res) => {
+
+					let user = res.body;
+
+					// check name property
+					expect(user).to.have.property("name");
+					expect(user.name).to.not.equal(null);
+	
+					// check title property
+					expect(user).to.have.property("title");
+					expect(user.title).to.not.equal(null);
+					
+					// check active property
+					expect(user).to.have.property("active");
+					expect(user.active).to.not.equal(null);
+					
+					// TODO: Check if user has all properties.
+	
+					done();
+	
+				});
+		});
+
 
 
 	});
