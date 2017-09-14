@@ -34,10 +34,23 @@ describe('Tests', () => {
 	context('Users', () => {		
 		it('Get users list', (done) => {
 			api.get('/users')
-				.set('authorization', login)
+				.set('authorization', accessToken)
 				.then((res) => {
 					// we expect that there is 6 users. You can check/confirm that in app code.
-					expect(res.body.length).to.be.equal(6);
+					let users = res.body;
+					expect(users.length).to.be.equal(6);
+					
+					const properties = [
+						'user_id',
+						'name',
+						'title',
+						'active'
+					];
+
+					users.forEach(user => {
+						expect(properties.every(prop => user.hasOwnProperty(prop))).to.be.true;	
+					});
+
 					done();
 				}).
 			catch(done);
