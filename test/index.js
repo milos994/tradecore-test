@@ -13,17 +13,20 @@ describe('Tests', () => {
 
 	// Login user to the system and fetch access token
 	context('Sign in', () => {
-		it('Login user', (done) => {
+		it('Returns an access token', (done) => {
 			api.post('/sign-in')
 				.send({
 					password: 'password',
 					email: 'email',
 				})
 				.then((res) => {
-					login = res.body.access_token;
+					accessToken = res.body.access_token;
+					expect(accessToken).to.be.ok;
+					expect(accessToken.length).to.be.equal(36);
+					expect(/^\d{8}-(\d{4}-){3}\d{12}$/.test(accessToken)).to.be.ok;
 					done();
-				}).
-				catch(done);
+				})
+				.catch(done);
 		});
 	});
 
