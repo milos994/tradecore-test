@@ -68,6 +68,16 @@ describe('Tests', () => {
 				.catch(done);
 		});
 
+		it('Forbids access to unauthorized client', (done) => {
+			api.get('/users/1')
+				.then((res) => {
+					expect(res.body.error).to.be.true;
+					expect(res.body.message).to.be.equal("Missing authorization token");
+					done();
+				})
+				.catch(done);
+		});
+
 		it('Get users list', (done) => {
 			api.get('/users')
 				.set('authorization', accessToken)
@@ -119,6 +129,18 @@ describe('Tests', () => {
 				});
 		});
 
+		it('Returns an error if the user is not active', (done) => {
+			api.get('/users/3')
+				.set('authorization', accessToken)
+				.set('Accept', 'aplication/json')
+				.then((res) => {
+					expect(res.body.error).to.be.true;
+					expect(res.body.message).to.be.equal("User is not active");
+					done();
+				})
+				.catch(done);
+		});
+
 	});
-	
+
 });
