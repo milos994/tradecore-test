@@ -11,6 +11,15 @@ let login = null;
 let users = null;
 describe('Tests', () => {
 
+	context('Hello World', () => {
+
+		it('Returns Hello World', (done) => {
+			api.get('/')
+			.expect('Hello World!', done);
+		});
+
+	})
+
 	// Login user to the system and fetch access token
 	context('Sign in', () => {
 
@@ -99,7 +108,25 @@ describe('Tests', () => {
 				});
 		});
 
+	});
 
+	context("User account", () => {
+
+		it('Get user account', (done) => {
+			api.get('/users/1/accounts')
+				.set('authorization', accessToken)
+				.set('Accept', 'aplication/json')
+				.then((res) => {
+
+					let userAccount = res.body;
+
+					expect(userAccount).to.have.property("account_id");
+
+	
+					done();
+	
+				});
+		});
 
 	});
 
