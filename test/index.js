@@ -96,9 +96,8 @@ describe('Tests', () => {
 
 		});
 
-
 		context('Single user', () => {
-			
+
 			it('Forbids access to unauthorized client', (done) => {
 				api.get('/users/1')
 					.then((res) => {
@@ -108,8 +107,6 @@ describe('Tests', () => {
 					})
 					.catch(done);
 			});
-	
-	
 	
 			it('Get user by user_id', (done) => {
 				api.get('/users/1')
