@@ -11,6 +11,7 @@ let login = null;
 let users = null;
 describe('Tests', () => {
 
+	// Body response
 	context('Hello World', () => {
 
 		it('Returns Hello World', (done) => {
@@ -56,6 +57,16 @@ describe('Tests', () => {
 
 	// Get a list of all users
 	context('Users', () => {
+
+		it('Forbids access to unauthorized clients', (done) => {
+			api.get('/users')
+				.then((res) => {
+					expect(res.body.error).to.be.true;
+					expect(res.body.message).to.be.equal("Missing authorization token");
+					done();
+				})
+				.catch(done);
+		});
 
 		it('Get users list', (done) => {
 			api.get('/users')
@@ -109,25 +120,5 @@ describe('Tests', () => {
 		});
 
 	});
-
-	context("User account", () => {
-
-		it('Get user account', (done) => {
-			api.get('/users/1/accounts')
-				.set('authorization', accessToken)
-				.set('Accept', 'aplication/json')
-				.then((res) => {
-
-					let userAccount = res.body;
-
-					expect(userAccount).to.have.property("account_id");
-
 	
-					done();
-	
-				});
-		});
-
-	});
-
 });
