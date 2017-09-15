@@ -21,7 +21,7 @@ describe('Tests', () => {
 
 	})
 
-	// Login user to the system and fetch access token
+	// Sign in
 	context('Sign in', () => {
 
 		it('Returns an access token', (done) => {
@@ -55,7 +55,7 @@ describe('Tests', () => {
 
 	});
 
-	// Get a list of all users
+	// Users
 	context('Users', () => {
 
 		it('Forbids access to unauthorized clients', (done) => {
@@ -121,8 +121,6 @@ describe('Tests', () => {
 					// check active property
 					expect(user).to.have.property("active");
 					expect(user.active).to.not.equal(null);
-					
-					// TODO: Check if user has all properties.
 	
 					done();
 	
@@ -142,5 +140,68 @@ describe('Tests', () => {
 		});
 
 	});
+
+	// Accounts
+	context('Accounts', () => {
+
+		it('Forbids access to unauthorized clients', (done) => {
+			api.get('/users/1/accounts')
+				.then((res) => {
+					expect(res.body.error).to.be.true;
+					expect(res.body.message).to.be.equal("Missing authorization token");
+					done();
+				})
+				.catch(done);
+		});
+
+		it('Get accounts', (done) => {
+			api.get('/users/1/accounts')
+				.set('authorization', accessToken)
+				.then((res) => {
+					let accounts = res.body;
+					
+					const properties = [
+						'account_id',
+						'name',
+						'active',
+						'money'
+					];
+
+					accounts.forEach(account => {
+						expect(properties.every(prop => account.hasOwnProperty(prop))).to.be.true;	
+					});
+
+					done();
+				})
+				.catch(done);
+		});
+
+		it('Returns an error if the user accounts is not active', (done) => {
+			api.get('/users/3/accounts')
+				.set('authorization', accessToken)
+				.set('Accept', 'aplication/json')
+				.then((res) => {
+					expect(res.body.error).to.be.true;
+					expect(res.body.message).to.be.equal("User is not active");
+					done();
+				})
+				.catch(done);
+		});
+
+		it('Returns an error if user does not have accounts', (done) => {
+			api.get('/users/5/accounts')
+				.set('authorization', accessToken)
+				.set('Accept', 'aplication/json')
+				.then((res) => {
+					expect(res.body.error).to.be.true;
+					expect(res.body.message).to.be.equal("Time lords do not have accounts");
+					done();
+				})
+				.catch(done);
+		});
+
+
+	});
+	
 
 });
