@@ -58,85 +58,96 @@ describe('Tests', () => {
 	// Users
 	context('Users', () => {
 
-		it('Forbids access to unauthorized clients', (done) => {
-			api.get('/users')
-				.then((res) => {
-					expect(res.body.error).to.be.true;
-					expect(res.body.message).to.be.equal("Missing authorization token");
-					done();
-				})
-				.catch(done);
+		context('User list', () => {
+
+			it('Forbids access to unauthorized client', (done) => {
+				api.get('/users')
+					.then((res) => {
+						expect(res.body.error).to.be.true;
+						expect(res.body.message).to.be.equal("Missing authorization token");
+						done();
+					})
+					.catch(done);
+			});
+
+			it('Get users list', (done) => {
+				api.get('/users')
+					.set('authorization', accessToken)
+					.then((res) => {
+						// we expect that there is 6 users. You can check/confirm that in app code.
+						let users = res.body;
+						expect(users.length).to.be.equal(6);
+						
+						const properties = [
+							'user_id',
+							'name',
+							'title',
+							'active'
+						];
+	
+						users.forEach(user => {
+							expect(properties.every(prop => user.hasOwnProperty(prop))).to.be.true;	
+						});
+	
+						done();
+					})
+					.catch(done);
+			});
+
 		});
 
-		it('Forbids access to unauthorized client', (done) => {
-			api.get('/users/1')
-				.then((res) => {
-					expect(res.body.error).to.be.true;
-					expect(res.body.message).to.be.equal("Missing authorization token");
-					done();
-				})
-				.catch(done);
-		});
 
-		it('Get users list', (done) => {
-			api.get('/users')
-				.set('authorization', accessToken)
-				.then((res) => {
-					// we expect that there is 6 users. You can check/confirm that in app code.
-					let users = res.body;
-					expect(users.length).to.be.equal(6);
-					
-					const properties = [
-						'user_id',
-						'name',
-						'title',
-						'active'
-					];
-
-					users.forEach(user => {
-						expect(properties.every(prop => user.hasOwnProperty(prop))).to.be.true;	
+		context('Single user', () => {
+			
+			it('Forbids access to unauthorized client', (done) => {
+				api.get('/users/1')
+					.then((res) => {
+						expect(res.body.error).to.be.true;
+						expect(res.body.message).to.be.equal("Missing authorization token");
+						done();
+					})
+					.catch(done);
+			});
+	
+	
+	
+			it('Get user by user_id', (done) => {
+				api.get('/users/1')
+					.set('authorization', accessToken)
+					.set('Accept', 'aplication/json')
+					.then((res) => {
+	
+						let user = res.body;
+	
+						// check name property
+						expect(user).to.have.property("name");
+						expect(user.name).to.not.equal(null);
+		
+						// check title property
+						expect(user).to.have.property("title");
+						expect(user.title).to.not.equal(null);
+						
+						// check active property
+						expect(user).to.have.property("active");
+						expect(user.active).to.not.equal(null);
+		
+						done();
+		
 					});
-
-					done();
-				})
-				.catch(done);
-		});
-
-		it('Get user by user_id', (done) => {
-			api.get('/users/1')
-				.set('authorization', accessToken)
-				.set('Accept', 'aplication/json')
-				.then((res) => {
-
-					let user = res.body;
-
-					// check name property
-					expect(user).to.have.property("name");
-					expect(user.name).to.not.equal(null);
+			});
 	
-					// check title property
-					expect(user).to.have.property("title");
-					expect(user.title).to.not.equal(null);
-					
-					// check active property
-					expect(user).to.have.property("active");
-					expect(user.active).to.not.equal(null);
+			it('Returns an error if the user is not active', (done) => {
+				api.get('/users/3')
+					.set('authorization', accessToken)
+					.set('Accept', 'aplication/json')
+					.then((res) => {
+						expect(res.body.error).to.be.true;
+						expect(res.body.message).to.be.equal("User is not active");
+						done();
+					})
+					.catch(done);
+			});
 	
-					done();
-	
-				});
-		});
-
-		it('Returns an error if the user is not active', (done) => {
-			api.get('/users/3')
-				.set('authorization', accessToken)
-				.set('Accept', 'aplication/json')
-				.then((res) => {
-					expect(res.body.error).to.be.true;
-					expect(res.body.message).to.be.equal("User is not active");
-					done();
-				})
-				.catch(done);
 		});
 
 	});
