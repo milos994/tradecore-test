@@ -96,3 +96,15 @@ Response example
 ],
 ```
 
+## Tests
+
+In folder test you can find the mocha/chai tests for API.
+
+### How to run tests
+
+In the root of the project open terminal and enter 
+```  
+npm test 
+```
+
+
